@@ -1,0 +1,357 @@
+
+<div *ngIf="showPage=='login' || showPage=='signin'" style="display: flex; justify-content: center; align-items: center; height: 100vh;">
+    <div style="border: 1px solid #808080; padding: 20px; border-radius: 5px;box-shadow: 10px 5px 5px #808080;width:500px;" >
+
+        <!-- login -->
+        <div *ngIf="showPage=='login'">
+            <form #loginForm="ngForm" (ngSubmit)="onLogin(loginForm)" enctype="multipart/form-data" method="POST"
+                novalidate>
+                <div class="tittle_class">Login</div>
+
+                <!-- Email -->
+                <div>
+                    <div class="head_class">Email</div>
+                    <div style="margin-top: 5px;">
+                        <input type="email" placeholder="Enter the Email" required
+                            style="width: 100%; padding: 8px; box-sizing: border-box;" [(ngModel)]="email_id"
+                            name="email" #email="ngModel" />
+                        <div *ngIf="loginForm.submitted && email.errors?.['required']" class="error">
+                            Email is required.
+                        </div>
+                        <div *ngIf="email.errors?.['email']" class="error">
+                            Enter a valid email.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Password -->
+                <div style="margin-top: 10px;">
+                    <div class="head_class">Password</div>
+                    <div class="code_inbox">
+                        <input type="{{type}}" tabindex="1" class="code_input" placeholder="Enter your password"
+                            [(ngModel)]="password" name="password" required minlength="6"
+                            style="width: 100%; padding: 8px; box-sizing: border-box;" />
+                        <img [src]="showeyeIcon ? '../../assets/images/eye.svg' : '../../assets/images/eyeclose.svg'"
+                            class="eye_img" (click)="hideShow()" />
+                    </div>
+                    <div *ngIf="loginForm.submitted && loginForm.controls['password'].errors?.['required']"
+                        class="error">
+                        Password is required.
+                    </div>
+                    <div *ngIf="loginForm.controls['password'].errors?.['minlength']" class="error">
+                        Password must be at least 6 characters long.
+                    </div>
+                </div>
+
+
+                <!-- Submit Button -->
+                <div style="margin-top: 20px">
+                    <div style="margin: 10px;">
+                        <button class="login_btn" >Sign In</button>
+                    </div>
+                    <div style="margin: 10px; text-align: center;font-weight: bold;">
+                        <div >Don't have an account? <span (click)="signUp()" class="signup">Signup</span></div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- signIn -->
+        <div *ngIf="showPage=='signin'">
+            <form #registerForm="ngForm" (ngSubmit)="saveDetails(registerForm)" enctype="multipart/form-data"
+                method="POST" novalidate>
+
+                <div>
+                    <div class="tittle_class"> SignUp</div>
+
+                    <!-- First Name -->
+                    <div style="margin-top: 10px;">
+                        <div class="head_class">First Name</div>
+                        <div style="margin-top: 5px;">
+                            <input type="text" placeholder="Enter the First Name" [(ngModel)]="first_name"
+                                name="first_name" required style="width: 100%; padding: 8px; box-sizing: border-box;">
+                        </div>
+                        <div *ngIf="registerForm.submitted && registerForm.controls['first_name'].errors?.['required']"
+                            class="error">
+                            First Name is required.
+                        </div>
+                    </div>
+
+                    <!-- Last Name -->
+                    <div style="margin-top: 10px;">
+                        <div class="head_class">Last Name</div>
+                        <div style="margin-top: 5px;">
+                            <input type="text" placeholder="Enter the Last Name" [(ngModel)]="last_name"
+                                name="last_name" required style="width: 100%; padding: 8px; box-sizing: border-box;">
+                        </div>
+                        <div *ngIf="registerForm.submitted && registerForm.controls['last_name'].errors?.['required']"
+                            class="error">
+                            Last Name is required.
+                        </div>
+                    </div>
+
+                    <!-- Email id -->
+                    <div style="margin-top: 10px;">
+                        <div class="head_class">Email</div>
+                        <div style="margin-top: 5px;">
+                            <input type="email" placeholder="Enter the Email" [pattern]="emailPattern"
+                                [(ngModel)]="email_id" name="email_id" required
+                                style="width: 100%; padding: 8px; box-sizing: border-box;">
+                        </div>
+                        <div *ngIf="registerForm.submitted && registerForm.controls['email_id'].errors?.['required']"
+                            class="error">
+                            Email is required.
+                        </div>
+                        <div *ngIf="registerForm.controls['email_id'].errors?.['pattern']" class="error">
+                            Enter a valid email.
+                        </div>
+                    </div>
+
+                    <!-- Mobile Number -->
+                    <div style="margin-top: 10px;">
+                        <div class="head_class">Mobile Number</div>
+                        <div style="margin-top: 5px;">
+                            <input type="text" placeholder="Enter the Mobile Number" [(ngModel)]="mobile_number"
+                                name="mobile_number" required pattern="[0-9]{10}"
+                                style="width: 100%; padding: 8px; box-sizing: border-box;">
+                        </div>
+                        <div *ngIf="registerForm.submitted && registerForm.controls['mobile_number'].errors?.['required']"
+                            class="error">
+                            Mobile Number is required.
+                        </div>
+                        <div *ngIf="registerForm.controls['mobile_number'].errors?.['pattern']" class="error">
+                            Enter a valid 10-digit mobile number.
+                        </div>
+                    </div>
+
+                       <!-- Role -->
+                       <div style="margin-top: 10px;">
+                        <div class="head_class">Role</div>
+                        <div style="margin-top: 5px;">
+                            <select style="width: 100%; padding: 5px;" [(ngModel)]="user_role" name="user_role"
+                                required>
+                                <option *ngFor="let a of user_role" [value]="a">{{a}}</option>
+                            </select>
+                        </div>
+                        <div *ngIf="registerForm.submitted && registerForm.controls['user_role'].errors?.['required']"
+                            class="error">
+                            Role is required.
+                        </div>
+                    </div>
+
+                    <!-- Password -->
+                    <div style="margin-top: 10px;">
+                        <div class="head_class">Password</div>
+                        <div class="code_inbox" style="margin-bottom:0px;">
+                            <input type={{type}} tabindex="1" class="code_input" placeholder="Enter your password"
+                                [(ngModel)]="user_password" name="user_password" required minlength="6">
+                            <img [src]="showeyeIcon ? '../../assets/images/eye.svg' : '../../assets/images/eyeclose.svg'"
+                                class="eye_img" (click)="hideShow()" />
+                        </div>
+                        <div *ngIf="registerForm.submitted && registerForm.controls['user_password'].errors?.['required']"
+                            class="error">
+                            Password is required.
+                        </div>
+                        <div *ngIf="registerForm.controls['user_password'].errors?.['minlength']" class="error">
+                            Password must be at least 6 characters long.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Save -->
+                <div style="margin-top: 20px;">
+                    <div style="margin: 10px;">
+                        <button type="submit" class="login_btn">SignUp</button>
+                    </div>    
+
+                    <div style="margin: 10px; text-align: center;font-weight: bold;">
+                        <div>Already Have account? <span (click)="MoveToLogin()" class="signup">Login</span></div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+<div *ngIf="showPage === 'dashboard'">
+    <div style="position: fixed;width: 100%;padding:5px 20px;z-index: 1;background-color: #D3D3D3;">
+        <div style="float: left;">
+            <h2>Welcome, {{user?.firstName}} {{user?.lastName}}</h2>
+        </div>
+        <div style="float: right;">   
+            <button (click)="logout()" style="padding: 10px; background-color: #007bff; color: #fff; border: none; border-radius: 5px;">Logout</button>
+        </div>  
+        <div style="float: right;padding:0px 10px;"  *ngIf="product_page=='list' && role=='Customer'">   
+            <button (click)="moveProduct('cart')" style="padding: 10px; background-color: #007bff; color: #fff; border: none; border-radius: 5px;">Cart ({{this.cart_list.length}})</button>
+        </div>  
+   </div> 
+
+    <div style="clear: both;padding:50px 0px;z-index: -1;">
+
+        <!-- grid / list toggle -->
+         <div *ngIf="product_page=='list' && role=='Customer'">
+            <div style="float: right;padding: 20px;" *ngIf="product_page=='list'">
+                <div style="display: flex;">
+                    <div [ngClass]="view=='grid'?'active':'inactive'" (click)="changeView('grid')">Grid</div>
+                    <div [ngClass]="view=='list'?'active':'inactive'" (click)="changeView('list')">List</div>
+                </div>
+            </div>
+
+            <div><input style="float: left;margin: 20px;outline: none;padding: 5p;" type="text" [(ngModel)]="searchProduct" placeholder="Search products..."></div>
+        </div>
+
+        <!-- Product grid View -->
+        <div class="row" style="clear: both;padding: 0;margin: 20px" *ngIf="product_page=='list' && role=='Customer' && view=='grid'">
+            <div class="col-md-4" *ngFor="let a of product_list| filter:searchProduct;let i=index">
+                <div style="text-align: center;"><img style="width:250px;height:250px;" src="../assets/images/{{a.product_image}}.png"></div>
+                <div tooltip={{a.product_desc}} class="product_name">{{a.Product_name}}</div>
+                <div class="product_name">₹ {{a.product_cost}}</div>
+                <div style="margin-bottom: 20px;">
+                    <div style=" display: flex;  justify-content: center;  align-items: center;">
+                        <div style="display: inline-flex;border-radius: 5px;border: 1px solid #ccccb3;">
+                            <div style="cursor: pointer;padding:5px 10px;" (click)="productsCount('-',i)">-</div>
+                            <div style="border-right:1px solid#ccccb3;border-left:1px solid #ccccb3;padding:5px 10px;">{{a.count}}</div>
+                            <div style="cursor: pointer;padding:5px 10px;" (click)="productsCount('+',i)">+</div>
+                        </div>
+
+                        <div style="margin-left: 20px;background-color:#ff6347;padding: 5px 10px;border-radius: 5px;cursor: pointer;" disabled (click)="a.count>0?addToCart(i):''">Add to Cart</div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- product list View -->
+        <div  style="clear: both;padding: 0;margin: 20px" *ngIf="product_page=='list' && role=='Customer' && view=='list'">
+            <table class="table">
+                <tr>
+                  <th style="text-align: center;">S.No</th>
+                  <th style="text-align: center;">Product Name</th>
+                  <th style="text-align: center;">Product Image</th>
+                  <th style="text-align: center;">Product cost</th>
+                  <th style="text-align: center;"></th>
+                  <th style="text-align: center;"></th>
+                </tr>
+                <tr *ngFor="let p of product_list| filter:searchProduct;let i=index">
+                  <td style="font-size: 14px;text-align: center;font-weight: 400;">{{i+1}}</td>
+                  <td style="font-size: 14px;text-align: center;font-weight: 400;" tooltip={{p.product_desc}}>{{p.Product_name}}</td>
+                  <td style="font-size: 14px;text-align: center;font-weight: 400;"><img style="width: 50px;height: 50px;" src="../assets/images/{{p.product_image}}.png"></td>
+                  <td style="font-size: 14px;text-align: center;font-weight: 400;">{{p.product_cost}}</td>
+                  <td style="font-size: 14px;text-align: center;font-weight: 400;">
+                    <div style="display: inline-flex;border-radius: 5px;border: 1px solid #ccccb3;">
+                        <div style="cursor: pointer;padding:5px 10px;" (click)="productsCount('-',i)">-</div>
+                        <div style="border-right:1px solid#ccccb3;border-left:1px solid #ccccb3;padding:5px 10px;">{{p.count}}</div>
+                        <div style="cursor: pointer;padding:5px 10px;" (click)="productsCount('+',i)">+</div>
+                    </div>
+                  </td>
+                  <td style="font-size: 14px;text-align: center;font-weight: 400;">
+                    <div style="display: inline-block;background-color:#ff6347;padding: 5px 10px;border-radius: 5px;cursor: pointer;" disabled (click)="p.count>0?addToCart(i):''">Add to Cart</div>
+                </td>
+                </tr>
+            </table> 
+        </div>
+
+        <!-- user list View  Admin -->
+        <div  *ngIf="role=='Admin'" style="margin: 20px;">
+            <table class="table">
+                <tr>
+                  <th>S.No</th>
+                  <th>Name</th>
+                  <th>Mail id</th>
+                  <th>Role</th>
+                  <th>Phone Number</th>
+                </tr>
+                <tr *ngFor="let p of product_list;let i=index">
+                  <td style="font-size: 14px;text-align: center;font-weight: 400;">{{i+1}}</td>
+                  <td style="font-size: 14px;text-align: center;font-weight: 400;">{{p.firstName}}</td>
+                  <td style="font-size: 14px;text-align: center;font-weight: 400;">{{p.email}}</td>
+                  <td style="font-size: 14px;text-align: center;font-weight: 400;">{{p.user_role}}</td>
+                  <td style="font-size: 14px;text-align: center;font-weight: 400;">{{p.phone}}</td>
+                </tr>
+            </table> 
+        </div>
+
+        <!-- View Cart -->
+        <div style="margin: 20px 10px;" *ngIf="product_page=='cart'&& role=='Customer'">
+            <div style="margin-bottom: 20px;"><img style="width: 20px;height: 20px;cursor: pointer" src="../assets/images/left_arrow.png" (click)="moveProduct('list')"> <span style="font-size: 16px;font-weight: bold;padding-left: 10px;">Back</span></div>
+            <table class="table">
+                <tr>
+                  <th style="text-align: center;">S.No</th>
+                  <th style="text-align: center;">Product Code</th>
+                  <th style="text-align: center;">Product Image</th>
+                  <th style="text-align: center;">Product Name</th>
+                  <th style="text-align: center;">Product Quantity</th>
+                  <th style="text-align: center;">Total cost</th>
+                  <th style="text-align: center;"></th>
+                </tr>
+                <tr *ngFor="let p of cart_list;let i=index">
+                  <td style="font-size: 14px;text-align: center;font-weight: 400;">{{i+1}} <span style="padding-left: 5px;"><input type="checkbox" (click)="buyProduct(i)"></span></td>
+                  <td style="font-size: 14px;text-align: center;font-weight: 400;">{{p.product_code}}</td>
+                  <td style="font-size: 14px;text-align: center;font-weight: 400;"><img style="width: 50px;height: 50px;" src="../assets/images/{{p.product_img}}.png"></td>
+                  <td style="font-size: 14px;text-align: center;font-weight: 400;">{{p.product_name}}</td>
+                  <td style="font-size: 14px;text-align: center;font-weight: 400;">{{p.purchase_qty}}</td>
+                  <td style="font-size: 14px;text-align: center;font-weight: 400;">{{p.total_cost}}</td>
+                  <td><img style="width: 20px;height: 20px;cursor: pointer" src="../assets/images/delete_icon.png" (click)="deleteProduct(i)"></td>
+                </tr>
+            </table> 
+        </div>
+
+        <div style="clear: both"  *ngIf="product_page=='cart'&& role=='Customer' && product_purchased.length>0">
+            <div style="text-align: right;margin: 20px; cursor: pointer;  padding: 5px;" class="fixed-bottom" data-toggle="modal" data-target="#myModal">
+                <div class="submit_btn">Proceed</div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- model box -->
+    <div class="modal fade" id="myModal" role="dialog">
+        <div class="modal-dialog">
+        
+          <!-- Modal content-->
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">Product List</h4>
+            </div>
+            <div class="modal-body">
+                <table class="table">
+                    <tr>
+                      <th>S.No</th>
+                      <th>Name</th>
+                      <th>Product Name</th>
+                      <th>Product Image</th>
+                      <th>Quantity</th>
+                      <th>Cost</th>
+                      <th>Total</th>
+                    </tr>
+                    <tr *ngFor="let p of product_purchased;let i=index">
+                      <td style="font-size: 14px;text-align: center;font-weight: 400;">{{i+1}}</td>
+                      <td style="font-size: 14px;text-align: center;font-weight: 400;">{{p.purchaser_name}}</td>
+                      <td style="font-size: 14px;text-align: center;font-weight: 400;">{{p.product_name}}</td>
+                      <td style="font-size: 14px;text-align: center;font-weight: 400;"><img style="width: 30px;height: 30px;" src="../assets/images/{{p.product_img}}.png"></td>
+                      <td style="font-size: 14px;text-align: center;font-weight: 400;">{{p.purchase_qty}}</td>
+                      <td style="font-size: 14px;text-align: center;font-weight: 400;">{{p.purchase_qty}}</td>
+                      <td style="font-size: 14px;text-align: center;font-weight: 400;">{{p.total_cost}}</td>
+                    </tr>
+                </table> 
+                <div style="font-weight: bold;font-style: 14px;">Total Cost: {{total_purchasedcost}}</div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default submit_btn" data-dismiss="modal" >Close</button>
+              <button type="button" class="btn btn-default submit_btn" data-dismiss="modal" (click)="confirmOrder()">submit</button>
+
+            </div>
+          </div>
+          
+        </div>
+    </div>
+
+</div>
+
+
+
+
+  
+
