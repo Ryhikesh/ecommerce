@@ -74,22 +74,24 @@ router.post('/login', async (req, res) => {
     }
 });
 
-router.get('/getproductlist/:role', async (req, res) => {
-    console.log(req.params.role)
-
+router.get('/getproductlist/:role/:umail', async (req, res) => {
     var product_list;
+    var order_list;
     if(req.params.role=='Customer')
     {
          product_list = await Ecommers.Product.find({ });
+         order_list=await Ecommers.Order.find({ purchaser_mail: req.params.umail });
     }
     else if(req.params.role=='Admin')
     {
         product_list = await Ecommers.User.find({ });
+      
     }
     
     res.status(200).json({
         product_list:product_list,
-        role:req.params.role
+        role:req.params.role,
+        order_list:order_list
     })
 
 })
@@ -139,7 +141,7 @@ router.post('/purchaseproduct', async (req, res) => {
     var total_cost=req.body.reduce((accumulator, product) => accumulator + product.total_cost, 0)
 
     const order_info = req.body.map(x => ({
-        product_name: x.purchaser_name,
+        product_name: x.product_name,
         product_img: x.product_img,
         purchase_qty: x.purchase_qty,
         product_cost: x.total_cost,
@@ -150,6 +152,7 @@ router.post('/purchaseproduct', async (req, res) => {
         purchaser_name: req.body[0].purchaser_name, 
         purchaser_mail: req.body[0].purchaser_mail, 
         total_cost: total_cost,
+        order_id:Math.floor(100000 + Math.random() * 900000),
         order_info: order_info
     });
 
@@ -158,8 +161,9 @@ router.post('/purchaseproduct', async (req, res) => {
     const ids = req.body.map(product => product._id);
     var delete_list=await Ecommers.Cart.deleteMany({_id: { $in: ids }});
     var cart_list=await Ecommers.Cart.find({});
+    var order_list=await Ecommers.Order.find({ purchaser_mail: req.body[0].purchaser_mail});
 
-    res.status(201).json({ message: 'Order saved successfully!', order: newOrder,cart_list:cart_list});
+    res.status(201).json({ message: 'Order saved successfully!', order_list: order_list,cart_list:cart_list});
 })
 
 
