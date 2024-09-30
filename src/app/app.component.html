@@ -184,7 +184,10 @@
         </div>  
         <div style="float: right;padding:0px 10px;"  *ngIf="product_page=='list' && role=='Customer'">   
             <button (click)="moveProduct('cart')" style="padding: 10px; background-color: #007bff; color: #fff; border: none; border-radius: 5px;">Cart ({{this.cart_list.length}})</button>
-        </div>  
+        </div> 
+        <div style="float: right;padding:0px 5px;cursor: pointer;" data-toggle="modal" data-target="#mycart">
+            <div  style="padding: 10px; background-color: #007bff; color: #fff; border: none; border-radius: 5px;">Orders ({{order_list.length}})</div>
+        </div> 
    </div> 
 
     <div style="clear: both;padding:50px 0px;z-index: -1;">
@@ -205,8 +208,9 @@
         <div class="row" style="clear: both;padding: 0;margin: 20px" *ngIf="product_page=='list' && role=='Customer' && view=='grid'">
             <div class="col-md-4" *ngFor="let a of product_list| filter:searchProduct;let i=index">
                 <div style="text-align: center;"><img style="width:250px;height:250px;" src="../assets/images/{{a.product_image}}.png"></div>
-                <div tooltip={{a.product_desc}} class="product_name">{{a.Product_name}}</div>
-                <div class="product_name">₹ {{a.product_cost}}</div>
+                <div tooltip={{a.product_desc}} class="product_name"> {{a.Product_name}} </div>
+                <div class="product_name">discount {{a.discount_percent}} %</div>
+                <div class="product_name"><del>₹ {{a.product_cost}}</del> ₹{{changecost(a.product_cost,a.discount_percent)}}</div>
                 <div style="margin-bottom: 20px;">
                     <div style=" display: flex;  justify-content: center;  align-items: center;">
                         <div style="display: inline-flex;border-radius: 5px;border: 1px solid #ccccb3;">
@@ -230,6 +234,7 @@
                   <th style="text-align: center;">S.No</th>
                   <th style="text-align: center;">Product Name</th>
                   <th style="text-align: center;">Product Image</th>
+                  <th style="text-align: center;">Discount</th>
                   <th style="text-align: center;">Product cost</th>
                   <th style="text-align: center;"></th>
                   <th style="text-align: center;"></th>
@@ -238,7 +243,8 @@
                   <td style="font-size: 14px;text-align: center;font-weight: 400;">{{i+1}}</td>
                   <td style="font-size: 14px;text-align: center;font-weight: 400;" tooltip={{p.product_desc}}>{{p.Product_name}}</td>
                   <td style="font-size: 14px;text-align: center;font-weight: 400;"><img style="width: 50px;height: 50px;" src="../assets/images/{{p.product_image}}.png"></td>
-                  <td style="font-size: 14px;text-align: center;font-weight: 400;">{{p.product_cost}}</td>
+                  <td style="font-size: 14px;text-align: center;font-weight: 400;">{{p.discount_percent}} %</td>
+                  <td style="font-size: 14px;text-align: center;font-weight: bold;"><del>₹ {{p.product_cost}}</del> ₹{{changecost(p.product_cost,p.discount_percent)}}</td>
                   <td style="font-size: 14px;text-align: center;font-weight: 400;">
                     <div style="display: inline-flex;border-radius: 5px;border: 1px solid #ccccb3;">
                         <div style="cursor: pointer;padding:5px 10px;" (click)="productsCount('-',i)">-</div>
@@ -257,11 +263,11 @@
         <div  *ngIf="role=='Admin'" style="margin: 20px;">
             <table class="table">
                 <tr>
-                  <th>S.No</th>
-                  <th>Name</th>
-                  <th>Mail id</th>
-                  <th>Role</th>
-                  <th>Phone Number</th>
+                  <th style="text-align: center;">S.No</th>
+                  <th style="text-align: center;">Name</th>
+                  <th style="text-align: center;">Mail id</th>
+                  <th style="text-align: center;">Role</th>
+                  <th style="text-align: center;">Phone Number</th>
                 </tr>
                 <tr *ngFor="let p of product_list;let i=index">
                   <td style="font-size: 14px;text-align: center;font-weight: 400;">{{i+1}}</td>
@@ -342,6 +348,63 @@
               <button type="button" class="btn btn-default submit_btn" data-dismiss="modal" >Close</button>
               <button type="button" class="btn btn-default submit_btn" data-dismiss="modal" (click)="confirmOrder()">submit</button>
 
+            </div>
+          </div>
+          
+        </div>
+    </div>
+
+    
+    <!-- cart model box -->
+    <div class="modal fade" id="mycart" role="dialog">
+        <div class="modal-dialog">
+        
+          <!-- Modal content-->
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">Oders List</h4>
+            </div>
+            <div class="modal-body">
+                <div >
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>S.No</th>
+                                <th>Code</th>
+                                <th>Product Name</th>
+                                <th>Product Image</th>
+                                <th>Quantity</th>
+                                <th>Cost(₹)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <ng-container *ngFor="let a of order_list">
+                                <tr>
+                                    <td colspan="4" style="font-weight: bold; text-align: center;">Order ID: {{a.order_id}}</td>
+                                    <td colspan="3" style="font-weight: bold; text-align: center;">Total Cost: {{a.total_cost}}</td>
+                                </tr>
+                                <ng-container *ngFor="let o of a.order_info; let i = index">
+                                    <tr>
+                                        <td style="font-size: 14px; text-align: center; font-weight: 400;">{{i + 1}}</td>
+                                        <td style="font-size: 14px; text-align: center; font-weight: 400;">{{o.product_code}}</td>
+                                        <td style="font-size: 14px; text-align: center; font-weight: 400;">{{o.product_name}}</td>
+                                        <td style="font-size: 14px; text-align: center; font-weight: 400;">
+                                            <img style="width: 30px; height: 30px;" src="../assets/images/{{o.product_img}}.png">
+                                        </td>
+                                        <td style="font-size: 14px; text-align: center; font-weight: 400;">{{o.purchase_qty}}</td>
+                                        <td style="font-size: 14px; text-align: center; font-weight: 400;">{{o.product_cost}}</td>
+                                    </tr>
+                                </ng-container>
+                                <tr>
+                                    <td colspan="7" style="border-bottom: 1px solid #ccc;"></td>
+                                </tr>
+                            </ng-container>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default submit_btn" data-dismiss="modal" >Close</button>
             </div>
           </div>
           

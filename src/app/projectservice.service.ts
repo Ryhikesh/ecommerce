@@ -27,9 +27,9 @@ export class ProjectserviceService {
     return this.http.get<any>(`${this.root}/users`); // Adjust the endpoint as needed
   }
 
-  getProductList(role:any)
+  getProductList(role:any,umail:any)
   {
-    return this.http.get<any>(`${this.root}/getproductlist`+'/'+role);
+    return this.http.get<any>(`${this.root}/getproductlist`+'/'+role+'/'+umail);
   }
 
   saveCartProduct(bulkquery:any)

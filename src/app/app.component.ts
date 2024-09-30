@@ -40,6 +40,7 @@ export class AppComponent {
   public view:any;
   public searchProduct:any;
   public total_purchasedcost:any;
+  public order_list:any=[];
 
   constructor( private projectservice : ProjectserviceService,private router: Router,private toastr: ToastrService)
   {
@@ -61,7 +62,7 @@ export class AppComponent {
      this.product_page='list';
 
      
-    this.getdatas(this.role)
+    this.getdatas(this.role,this.user_mail)
 
 
      this.projectservice.getCartList(this.user_mail).subscribe(
@@ -137,8 +138,9 @@ export class AppComponent {
           };
           
           this.role=this.user.role;
+          this.user_mail=this.user.email;
 
-          this.getdatas(this.role)
+          this.getdatas(this.role,this.user_mail)
 
           // Store user in sessionStorage
           sessionStorage.setItem('user', JSON.stringify(this.user));
@@ -199,13 +201,16 @@ export class AppComponent {
 
   addToCart(index:any)
   {
+    var cost=this.product_list[index].product_cost*(this.product_list[index].discount_percent/100);
+    console.log(cost)
+    var discount_cost=this.product_list[index].product_cost-cost;
     var cart_list={
       'purchaser_name':this.user_name,
       'purchaser_mail':this.user_mail,
       'purchase_qty':this.product_list[index].count,
       'product_name':this.product_list[index].Product_name,
       'product_code':this.product_list[index].product_code,
-      'total_cost': this.product_list[index].count*this.product_list[index].product_cost,
+      'total_cost': this.product_list[index].count*discount_cost,
       'product_img':this.product_list[index].product_image
     }
     this.product_list[index].count=0;
@@ -240,12 +245,10 @@ export class AppComponent {
 
   }
 
-  getdatas(role:any)
+  getdatas(role:any,umail:any)
   {
-    this.projectservice.getProductList(role).subscribe(
+    this.projectservice.getProductList(role,umail).subscribe(
       (data: any) => {
-        console.log(data)
-       
         if(data.role=='Admin')
         {
           this.product_list=data.product_list
@@ -254,6 +257,8 @@ export class AppComponent {
         {
            this.product_list=data.product_list;
            this.product_list.forEach((x:any)=>x.count=0)
+           this.order_list=data.order_list
+           console.log(this.order_list)
         }
     })
     
@@ -281,10 +286,17 @@ export class AppComponent {
   {
     this.projectservice.purchaseProduct(this.product_purchased).subscribe(
       (data: any) => {
-        console.log(data)
         this.toastr.success(data.message)
-        this.cart_list=data.cart_list
+        this.cart_list=data.cart_list;
+        this.order_list=data.order_list;
     })
+  }
+
+  changecost(cost:any,discount_cost:any)
+  {
+    var discount_percentage:any=cost*(discount_cost/100);
+    var discount_value:any=cost-discount_percentage;
+    return(discount_value)
   }
   
 
