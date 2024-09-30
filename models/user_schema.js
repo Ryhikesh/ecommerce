@@ -15,6 +15,7 @@ var purchasesSchema=new Schema({
     purchaser_name:{type:String},
     purchaser_mail:{type:String},
     total_cost:{type:Number},
+    order_id:{type:Number},
     order_info:[orderSchema]
 })
 
@@ -33,7 +34,8 @@ var productSchema=new Schema({
     product_image:{type:String},
     product_cost:{type:Number},
     product_code:{type:Number},
-    product_desc:{type:String}
+    product_desc:{type:String},
+    discount_percent:{type:Number}
 })
 
 var userSchema=new Schema({
